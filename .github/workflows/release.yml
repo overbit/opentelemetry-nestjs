@@ -1,7 +1,7 @@
 name: Publish Package to npmjs
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main, beta]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,16 +10,17 @@ jobs:
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: '18.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - name: Install semantic-release extra plugins
         run: npm install --save-dev @semantic-release/changelog @semantic-release/git
-      - if: 'github.event.release.prerelease'
-        run: npm publish --access public --tag beta
+      - name: Test
+        run: npm run test:unit --if-present
+      - name: Build
+        run: npm run build
+      - name: Release
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - if: '!github.event.release.prerelease'
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
