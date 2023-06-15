@@ -52,7 +52,7 @@ export const OpenTelemetryModuleDefaultConfig = <OpenTelemetryModuleConfig>{
           span.updateName(`${request.method} ${request.path}`);
         },
         enabled: true,
-        ignoreIncomingPaths: ['/health'],
+        ignoreIncomingPaths: ['/health', '/_health', '/healthz', 'healthcheck'],
       },
       '@opentelemetry/instrumentation-net': {
         enabled: false,
