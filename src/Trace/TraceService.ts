@@ -1,10 +1,11 @@
 import { context, trace, Span } from '@opentelemetry/api';
 import { Injectable } from '@nestjs/common';
+import { Constants } from '../Constants';
 
 @Injectable()
 export class TraceService {
   public getTracer() {
-    return trace.getTracer('default');
+    return trace.getTracer(Constants.TRACER_NAME);
   }
 
   public getSpan(): Span {
@@ -12,7 +13,7 @@ export class TraceService {
   }
 
   public startSpan(name: string): Span {
-    const tracer = trace.getTracer('default');
+    const tracer = trace.getTracer(Constants.TRACER_NAME);
     return tracer.startSpan(name);
   }
 }

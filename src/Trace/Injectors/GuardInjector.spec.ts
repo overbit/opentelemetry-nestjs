@@ -1,22 +1,24 @@
 import { Test } from '@nestjs/testing';
 import { OpenTelemetryModule } from '../../OpenTelemetryModule';
-import { NoopSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { NoopSpanProcessor } from '@opentelemetry/sdk-trace-node';
 import { CanActivate, Controller, Get, UseGuards } from '@nestjs/common';
 import * as request from 'supertest';
 import { GuardInjector } from './GuardInjector';
 import { APP_GUARD } from '@nestjs/core';
 import { Span } from '../Decorators/Span';
+import { Tracing } from '../../Tracing';
 
 describe('Tracing Guard Injector Test', () => {
+  const sdkModule = OpenTelemetryModule.forRoot([GuardInjector]);
+  let exporterSpy: jest.SpyInstance;
   const exporter = new NoopSpanProcessor();
-  const exporterSpy = jest.spyOn(exporter, 'onStart');
-
-  const sdkModule = OpenTelemetryModule.forRoot({
-    spanProcessor: exporter,
-    traceAutoInjectors: [GuardInjector],
-  });
+  Tracing.init({ serviceName: 'a', spanProcessor: exporter });
 
   beforeEach(() => {
+    exporterSpy = jest.spyOn(exporter, 'onStart');
+  });
+
+  afterEach(() => {
     exporterSpy.mockClear();
     exporterSpy.mockReset();
   });

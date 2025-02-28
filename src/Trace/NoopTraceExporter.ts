@@ -1,4 +1,4 @@
-import { SpanExporter } from '@opentelemetry/sdk-trace-base';
+import { SpanExporter } from '@opentelemetry/sdk-trace-node';
 
 export class NoopTraceExporter implements SpanExporter {
   export() {

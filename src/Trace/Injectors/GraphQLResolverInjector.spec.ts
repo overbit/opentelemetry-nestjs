@@ -1,10 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { OpenTelemetryModule } from '../../OpenTelemetryModule';
 import { NoopSpanProcessor } from '@opentelemetry/sdk-trace-node';
-import { Controller, Get, Injectable } from '@nestjs/common';
-import { Span } from '../Decorators/Span';
-import * as request from 'supertest';
+import { Injectable } from '@nestjs/common';
 import { Constants } from '../../Constants';
+import { Resolver, Query, Subscription, Mutation } from '@nestjs/graphql';
 import { Tracing } from '../../Tracing';
 
 describe('Tracing Decorator Injector Test', () => {
@@ -22,11 +21,15 @@ describe('Tracing Decorator Injector Test', () => {
     exporterSpy.mockReset();
   });
 
-  it(`should trace decorated provider method`, async () => {
+  it(`should trace graphql resolver provider Query method`, async () => {
     // given
-    @Injectable()
+    @Resolver(() => {
+      /***/
+    })
     class HelloService {
-      @Span()
+      @Query(() => [String], {
+        nullable: false,
+      })
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
@@ -42,65 +45,68 @@ describe('Tracing Decorator Injector Test', () => {
 
     //then
     expect(exporterSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Provider->HelloService.hi' }),
+      expect.objectContaining({ name: 'Resolver->HelloService.hi' }),
       expect.any(Object),
     );
 
     await app.close();
   });
 
-  it(`should trace decorated controller method`, async () => {
+  it(`should trace graphql resolver provider Mutation method`, async () => {
     // given
-    @Controller('hello')
-    class HelloController {
-      @Span()
-      @Get()
+    @Resolver(() => {
+      /***/
+    })
+    class HelloService {
+      @Mutation(() => [String], {
+        nullable: false,
+      })
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
       imports: [sdkModule],
-      controllers: [HelloController],
+      providers: [HelloService],
     }).compile();
     const app = context.createNestApplication();
-    await app.init();
+    const helloService = app.get(HelloService);
 
     // when
-    await request(app.getHttpServer()).get('/hello').send().expect(200);
+    helloService.hi();
 
     //then
     expect(exporterSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Controller->HelloController.hi' }),
+      expect.objectContaining({ name: 'Resolver->HelloService.hi' }),
       expect.any(Object),
     );
 
     await app.close();
   });
-
-  it(`should trace decorated controller method with custom trace name`, async () => {
+  it(`should trace graphql resolver provider Subscription method`, async () => {
     // given
-    @Controller('hello')
-    class HelloController {
-      @Span('MAVI_VATAN')
-      @Get()
+    @Resolver(() => {
+      /***/
+    })
+    class HelloService {
+      @Subscription(() => [String], {
+        nullable: false,
+      })
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
       imports: [sdkModule],
-      controllers: [HelloController],
+      providers: [HelloService],
     }).compile();
     const app = context.createNestApplication();
-    await app.init();
+    const helloService = app.get(HelloService);
 
     // when
-    await request(app.getHttpServer()).get('/hello').send().expect(200);
+    helloService.hi();
 
     //then
     expect(exporterSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: 'Controller->HelloController.MAVI_VATAN',
-      }),
+      expect.objectContaining({ name: 'Resolver->HelloService.hi' }),
       expect.any(Object),
     );
 
@@ -110,8 +116,11 @@ describe('Tracing Decorator Injector Test', () => {
   it(`should not trace already tracing prototype`, async () => {
     // given
     @Injectable()
+    @Resolver()
     class HelloService {
-      @Span()
+      @Query(() => [String], {
+        nullable: false,
+      })
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
