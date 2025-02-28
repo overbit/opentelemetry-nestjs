@@ -1,23 +1,21 @@
 import { DynamicModule } from '@nestjs/common';
-import { NodeSDK } from '@opentelemetry/sdk-node';
 import { TraceService } from './Trace/TraceService';
 import { Constants } from './Constants';
-import { OpenTelemetryModuleDefaultConfig } from './OpenTelemetryModuleDefaultConfig';
+import { OpenTelemetryModuleDefaultConfig } from './OpenTelemetryModuleConfigDefault';
 import { FactoryProvider } from '@nestjs/common/interfaces/modules/provider.interface';
-import { OpenTelemetryService } from './OpenTelemetryService';
 import { OpenTelemetryModuleAsyncOption } from './OpenTelemetryModuleAsyncOption';
 import { DecoratorInjector } from './Trace/Injectors/DecoratorInjector';
 import { ModuleRef } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { Tracer } from '@opentelemetry/sdk-trace-base';
+import { Tracer } from '@opentelemetry/sdk-trace-node';
 import { OpenTelemetryModuleConfig } from './OpenTelemetryModuleConfig.interface';
 
 export class OpenTelemetryModule {
-  static async forRoot(
-    configuration: Partial<OpenTelemetryModuleConfig> = {},
-  ): Promise<DynamicModule> {
-    configuration = { ...OpenTelemetryModuleDefaultConfig, ...configuration };
-    const injectors = configuration?.traceAutoInjectors ?? [];
+  static forRoot(
+    traceAutoInjectors?: OpenTelemetryModuleConfig,
+  ): DynamicModule {
+    const injectors = traceAutoInjectors ?? OpenTelemetryModuleDefaultConfig;
+
     return {
       global: true,
       module: OpenTelemetryModule,
@@ -25,37 +23,17 @@ export class OpenTelemetryModule {
       providers: [
         ...injectors,
         TraceService,
-        OpenTelemetryService,
         DecoratorInjector,
-        this.buildProvider(configuration),
-        this.buildInjectors(configuration),
+        this.buildInjectors(injectors),
         this.buildTracer(),
-        {
-          provide: Constants.SDK_CONFIG,
-          useValue: configuration,
-        },
       ],
       exports: [TraceService, Tracer],
     };
   }
 
-  private static buildProvider(
-    configuration?: Partial<OpenTelemetryModuleConfig>,
-  ): FactoryProvider {
-    return {
-      provide: Constants.SDK,
-      useFactory: async () => {
-        const sdk = new NodeSDK(configuration);
-        await sdk.start();
-        return sdk;
-      },
-    };
-  }
-
   private static buildInjectors(
-    configuration?: Partial<OpenTelemetryModuleConfig>,
+    injectors: OpenTelemetryModuleConfig = [],
   ): FactoryProvider {
-    const injectors = configuration?.traceAutoInjectors ?? [];
     return {
       provide: Constants.SDK_INJECTORS,
       useFactory: async (...injectors) => {
@@ -81,8 +59,6 @@ export class OpenTelemetryModule {
       imports: [...configuration?.imports, EventEmitterModule.forRoot()],
       providers: [
         TraceService,
-        OpenTelemetryService,
-        this.buildAsyncProvider(),
         this.buildAsyncInjectors(),
         this.buildTracer(),
         {
@@ -95,27 +71,12 @@ export class OpenTelemetryModule {
     };
   }
 
-  private static buildAsyncProvider(): FactoryProvider {
-    return {
-      provide: Constants.SDK,
-      useFactory: async (config) => {
-        config = { ...OpenTelemetryModuleDefaultConfig, ...config };
-        const sdk = new NodeSDK(config);
-        await sdk.start();
-        return sdk;
-      },
-      inject: [Constants.SDK_CONFIG],
-    };
-  }
-
   private static buildAsyncInjectors(): FactoryProvider {
     return {
       provide: Constants.SDK_INJECTORS,
-      useFactory: async (config, moduleRef: ModuleRef) => {
-        config = { ...OpenTelemetryModuleDefaultConfig, ...config };
+      useFactory: async (traceAutoInjectors, moduleRef: ModuleRef) => {
         const injectors =
-          config.traceAutoInjectors ??
-          OpenTelemetryModuleDefaultConfig.traceAutoInjectors;
+          traceAutoInjectors ?? OpenTelemetryModuleDefaultConfig;
 
         const decoratorInjector = await moduleRef.create(DecoratorInjector);
         await decoratorInjector.inject();

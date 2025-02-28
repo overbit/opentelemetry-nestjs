@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
 import { BaseTraceInjector } from './BaseTraceInjector';
 import { Injector } from './Injector';
+import { SpanKind } from '@opentelemetry/api';
 
 @Injectable()
 export class ControllerInjector extends BaseTraceInjector implements Injector {
@@ -34,6 +35,7 @@ export class ControllerInjector extends BaseTraceInjector implements Injector {
               controller: controller.name,
               method: controller.metatype.prototype[key].name,
             },
+            SpanKind.SERVER,
           );
           this.reDecorate(controller.metatype.prototype[key], method);
 

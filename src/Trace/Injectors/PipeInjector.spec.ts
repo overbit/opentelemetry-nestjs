@@ -1,21 +1,23 @@
 import { Test } from '@nestjs/testing';
 import { OpenTelemetryModule } from '../../OpenTelemetryModule';
-import { NoopSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { NoopSpanProcessor } from '@opentelemetry/sdk-trace-node';
 import { Controller, Get, PipeTransform, UsePipes } from '@nestjs/common';
 import { PipeInjector } from './PipeInjector';
 import { PIPES_METADATA } from '@nestjs/common/constants';
 import { APP_PIPE } from '@nestjs/core';
+import { Tracing } from '../../Tracing';
 
 describe('Tracing Pipe Injector Test', () => {
+  const sdkModule = OpenTelemetryModule.forRoot([PipeInjector]);
+  let exporterSpy: jest.SpyInstance;
   const exporter = new NoopSpanProcessor();
-  const exporterSpy = jest.spyOn(exporter, 'onStart');
-
-  const sdkModule = OpenTelemetryModule.forRoot({
-    spanProcessor: exporter,
-    traceAutoInjectors: [PipeInjector],
-  });
+  Tracing.init({ serviceName: 'a', spanProcessor: exporter });
 
   beforeEach(() => {
+    exporterSpy = jest.spyOn(exporter, 'onStart');
+  });
+
+  afterEach(() => {
     exporterSpy.mockClear();
     exporterSpy.mockReset();
   });

@@ -1,7 +1,7 @@
-import { Span, SpanStatusCode, trace } from '@opentelemetry/api';
+import { Span, SpanKind, SpanStatusCode, trace } from '@opentelemetry/api';
 import { Constants } from '../Constants';
-import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { TraceWrapperOptions } from './TraceWrapper.types';
+import { MetadataScanner } from '../MetaScanner';
 
 export class TraceWrapper {
   /**
@@ -46,29 +46,35 @@ export class TraceWrapper {
     prototype: Record<any, any>,
     traceName: string,
     attributes = {},
+    kind?: SpanKind,
   ): Record<any, any> {
     let method;
 
     if (prototype.constructor.name === 'AsyncFunction') {
       method = {
         [prototype.name]: async function (...args: unknown[]) {
-          const tracer = trace.getTracer('default');
-          return await tracer.startActiveSpan(traceName, async (span) => {
-            span.setAttributes(attributes);
-            return prototype
-              .apply(this, args)
-              .catch((error) => TraceWrapper.recordException(error, span))
-              .finally(() => {
-                span.end();
-              });
-          });
+          const tracer = trace.getTracer(Constants.TRACER_NAME);
+          return await tracer.startActiveSpan(
+            traceName,
+            { kind },
+            async (span) => {
+              span.setAttributes(attributes);
+              return prototype
+                .apply(this, args)
+                .catch((error) => TraceWrapper.recordException(error, span))
+                .finally(() => {
+                  span.end();
+                });
+            },
+          );
         },
       }[prototype.name];
     } else {
       method = {
         [prototype.name]: function (...args: unknown[]) {
-          const tracer = trace.getTracer('default');
-          return tracer.startActiveSpan(traceName, (span) => {
+          const tracer = trace.getTracer(Constants.TRACER_NAME);
+
+          return tracer.startActiveSpan(traceName, { kind }, (span) => {
             try {
               span.setAttributes(attributes);
               return prototype.apply(this, args);
