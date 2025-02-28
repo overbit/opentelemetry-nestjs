@@ -1,10 +1,12 @@
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Constants } from '../../Constants';
-import { MetadataScanner, ModulesContainer } from '@nestjs/core';
+import { ModulesContainer } from '@nestjs/core';
 import { Controller, Injectable } from '@nestjs/common/interfaces';
 import { PATH_METADATA } from '@nestjs/common/constants';
-import { PATTERN_HANDLER_METADATA } from '@nestjs/microservices/constants';
+import { PATTERN_METADATA } from '@nestjs/microservices/constants';
 import { TraceWrapper } from '../TraceWrapper';
+import { SpanKind } from '@opentelemetry/api';
+import { MetadataScanner } from '../../MetaScanner';
 
 export class BaseTraceInjector {
   protected readonly metadataScanner: MetadataScanner = new MetadataScanner();
@@ -36,7 +38,7 @@ export class BaseTraceInjector {
   }
 
   protected isMicroservice(prototype): boolean {
-    return Reflect.hasMetadata(PATTERN_HANDLER_METADATA, prototype);
+    return Reflect.hasMetadata(PATTERN_METADATA, prototype);
   }
 
   protected isAffected(prototype): boolean {
@@ -60,8 +62,13 @@ export class BaseTraceInjector {
     }
   }
 
-  protected wrap(prototype: Record<any, any>, traceName, attributes = {}) {
-    return TraceWrapper.wrap(prototype, traceName, attributes);
+  protected wrap(
+    prototype: Record<any, any>,
+    traceName,
+    attributes = {},
+    spanKind?: SpanKind,
+  ) {
+    return TraceWrapper.wrap(prototype, traceName, attributes, spanKind);
   }
 
   protected affect(prototype) {
