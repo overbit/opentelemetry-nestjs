@@ -33,6 +33,8 @@ Competability table for Nestjs versions.
 
 | Nestjs | Nestjs-OpenTelemetry |
 | ------ | -------------------- |
+| 11.x    | 6.x.x               |
+| 10.x    | 5.x.x               |
 | 9.x    | 3.x.x                |
 | 8.x    | 2.x.x                |
 
