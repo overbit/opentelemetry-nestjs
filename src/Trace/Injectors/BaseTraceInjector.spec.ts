@@ -31,7 +31,7 @@ describe('Base Trace Injector Test', () => {
         this.helloAgain();
       }
       @Span()
-      helloAgain() {} // eslint-disable-line @typescript-eslint/no-empty-function
+      helloAgain() {}
     }
 
     @Controller('hello')

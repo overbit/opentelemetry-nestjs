@@ -27,7 +27,6 @@ describe('Tracing Scheduler Injector Test', () => {
     @Injectable()
     class HelloService {
       @Cron('2 * * * * *')
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -55,7 +54,6 @@ describe('Tracing Scheduler Injector Test', () => {
     @Injectable()
     class HelloService {
       @Cron('2 * * * * *', { name: 'AKSUNGUR' })
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -86,7 +84,6 @@ describe('Tracing Scheduler Injector Test', () => {
     class HelloService {
       @Cron('2 * * * * *')
       @Span('ORUC_REIS')
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -114,7 +111,6 @@ describe('Tracing Scheduler Injector Test', () => {
     @Injectable()
     class HelloService {
       @Interval(100)
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -142,7 +138,6 @@ describe('Tracing Scheduler Injector Test', () => {
     @Injectable()
     class HelloService {
       @Interval('FATIH', 100)
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -172,7 +167,6 @@ describe('Tracing Scheduler Injector Test', () => {
     @Injectable()
     class HelloService {
       @Timeout(100)
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -200,7 +194,6 @@ describe('Tracing Scheduler Injector Test', () => {
     @Injectable()
     class HelloService {
       @Timeout('BARBAROS', 100)
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({

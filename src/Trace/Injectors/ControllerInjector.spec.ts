@@ -31,7 +31,6 @@ describe('Tracing Controller Injector Test', () => {
       @Controller('hello')
       class HelloController {
         @MessagePattern('time.us.*')
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         message() {}
       }
 
@@ -43,7 +42,7 @@ describe('Tracing Controller Injector Test', () => {
       await app.init();
 
       // when
-      await app.get(HelloController).message();
+      app.get(HelloController).message();
 
       //then
       await waitForExpect(() =>
@@ -64,7 +63,6 @@ describe('Tracing Controller Injector Test', () => {
       @Controller('hello')
       class HelloController {
         @EventPattern('user.created')
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         event() {}
       }
 
@@ -76,7 +74,7 @@ describe('Tracing Controller Injector Test', () => {
       await app.init();
 
       // when
-      await app.get(HelloController).event();
+      app.get(HelloController).event();
 
       //then
       await waitForExpect(() =>
@@ -97,12 +95,10 @@ describe('Tracing Controller Injector Test', () => {
       @Controller('hello')
       class HelloController {
         @MessagePattern('time.us.*')
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         message() {}
         @EventPattern('time.us.*')
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         event() {}
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
+
         other() {}
       }
 
@@ -137,7 +133,6 @@ describe('Tracing Controller Injector Test', () => {
       @Controller()
       class HelloController {
         @EventPattern('user.created')
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         event() {
           throw new Error("I'm an error");
         }
@@ -152,8 +147,8 @@ describe('Tracing Controller Injector Test', () => {
 
       // when
       try {
-        await app.get(HelloController).event();
-      } catch (error) {}
+        app.get(HelloController).event();
+      } catch {}
 
       //then
       await waitForExpect(() =>
@@ -179,7 +174,6 @@ describe('Tracing Controller Injector Test', () => {
       @Controller('hello')
       class HelloController {
         @Get()
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         hi() {}
       }
 
@@ -248,7 +242,6 @@ describe('Tracing Controller Injector Test', () => {
       // given
       @Controller('hello')
       class HelloController {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         hi() {}
       }
 
@@ -280,7 +273,6 @@ describe('Tracing Controller Injector Test', () => {
       class HelloController {
         @Get()
         @Span('SLM_CNM')
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         hi() {}
       }
 

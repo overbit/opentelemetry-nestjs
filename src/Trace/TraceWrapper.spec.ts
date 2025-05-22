@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { TraceWrapper } from './TraceWrapper';
 import { ILogger } from './Logger.interface';
 

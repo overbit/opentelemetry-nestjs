@@ -30,7 +30,6 @@ describe('Tracing Decorator Injector Test', () => {
       @Query(() => [String], {
         nullable: false,
       })
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -61,7 +60,6 @@ describe('Tracing Decorator Injector Test', () => {
       @Mutation(() => [String], {
         nullable: false,
       })
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -91,7 +89,6 @@ describe('Tracing Decorator Injector Test', () => {
       @Subscription(() => [String], {
         nullable: false,
       })
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -121,7 +118,6 @@ describe('Tracing Decorator Injector Test', () => {
       @Query(() => [String], {
         nullable: false,
       })
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     Reflect.defineMetadata(

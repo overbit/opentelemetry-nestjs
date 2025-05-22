@@ -35,7 +35,6 @@ describe('Tracing Guard Injector Test', () => {
     @Controller('hello')
     class HelloController {
       @Get()
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -69,7 +68,6 @@ describe('Tracing Guard Injector Test', () => {
     class HelloController {
       @Get()
       @UseGuards(VeyselEfendi)
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -106,7 +104,6 @@ describe('Tracing Guard Injector Test', () => {
       @Get()
       @Span('comolokko')
       @UseGuards(VeyselEfendi)
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -140,7 +137,6 @@ describe('Tracing Guard Injector Test', () => {
     @Controller('hello')
     class HelloController {
       @Get()
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
