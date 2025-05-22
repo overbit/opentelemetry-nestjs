@@ -42,7 +42,6 @@ export class TraceWrapper {
    * @returns The wrapped method
    */
   static wrap(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     prototype: Record<any, any>,
     traceName: string,
     attributes = {},

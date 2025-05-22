@@ -41,21 +41,18 @@ export class OpenTelemetryModule {
           if (injector['inject']) await injector.inject();
         }
       },
-      inject: [
-        DecoratorInjector,
-        // eslint-disable-next-line @typescript-eslint/ban-types
-        ...(injectors as Function[]),
-      ],
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+      inject: [DecoratorInjector, ...(injectors as Function[])],
     };
   }
 
   static async forRootAsync(
     configuration: OpenTelemetryModuleAsyncOption = {},
-  ): Promise<DynamicModule> {
+  ) {
     return {
       global: true,
       module: OpenTelemetryModule,
-      // eslint-disable-next-line no-unsafe-optional-chaining
+
       imports: [...configuration?.imports, EventEmitterModule.forRoot()],
       providers: [
         TraceService,

@@ -27,7 +27,6 @@ describe('Tracing Event Emitter Injector Test', () => {
     @Injectable()
     class HelloService {
       @OnEvent('selam')
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -56,7 +55,6 @@ describe('Tracing Event Emitter Injector Test', () => {
     class HelloService {
       @Span('untraceable')
       @OnEvent('tb2')
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({

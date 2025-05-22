@@ -27,7 +27,6 @@ describe('Tracing Decorator Injector Test', () => {
     @Injectable()
     class HelloService {
       @Span()
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -55,7 +54,6 @@ describe('Tracing Decorator Injector Test', () => {
     class HelloController {
       @Span()
       @Get()
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -83,7 +81,6 @@ describe('Tracing Decorator Injector Test', () => {
     class HelloController {
       @Span('MAVI_VATAN')
       @Get()
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     const context = await Test.createTestingModule({
@@ -112,7 +109,6 @@ describe('Tracing Decorator Injector Test', () => {
     @Injectable()
     class HelloService {
       @Span()
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       hi() {}
     }
     Reflect.defineMetadata(
